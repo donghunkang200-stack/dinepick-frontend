@@ -1,0 +1,42 @@
+.detail-map {
+  height: 180px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #dbeafe, #d1fae5);
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-map-pin {
+  font-size: 30px;
+}
+
+.detail-map-text {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.detail-map-name {
+  font-weight: 950;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.detail-map-address {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.detail-map-hint {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 12px;
+}

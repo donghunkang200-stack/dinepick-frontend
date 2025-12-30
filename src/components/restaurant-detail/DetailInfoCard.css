@@ -1,0 +1,47 @@
+.detail-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  padding: 14px;
+}
+
+.detail-card-header {
+  margin-bottom: 10px;
+}
+
+.detail-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: -0.2px;
+}
+
+.detail-info-list {
+  display: grid;
+  gap: 8px;
+}
+
+.detail-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.detail-info-label {
+  color: #6b7280;
+  font-weight: 900;
+}
+
+.detail-info-value {
+  color: #111;
+  text-align: right;
+}
+
+.detail-description {
+  margin: 12px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.6;
+}

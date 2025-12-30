@@ -1,0 +1,29 @@
+.detail-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.detail-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  background: #fafafa;
+  border: 1px solid #eee;
+}
+
+.detail-menu-name {
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.detail-menu-price {
+  font-size: 13px;
+  color: #111;
+  font-weight: 900;
+}

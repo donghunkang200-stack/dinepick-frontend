@@ -24,29 +24,13 @@ const FilterBar = ({
 }) => {
   return (
     <div className="filter-bar">
-      <div className="filter-left">
-        <div className="filter-title">Filters</div>
-        <div className="filter-chips">
-          {CATEGORY_OPTIONS.map((category) => (
-            <button
-              key={category}
-              className={`filter-chip ${
-                selectedCategory === category ? "active" : ""
-              }`}
-              onClick={() => onCategoryChange({ category })}
-              type="button"
-              aria-label={`Category ${category}`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="filter-right">
-        <div className="filter-meta">
-          <span className="filter-label">Region:</span>
-          <span className="filter-value">{region || "All"}</span>
+      <div className="filter-top">
+        <div>
+          <div className="filter-title">Filters</div>
+          <div className="filter-meta">
+            <span>Region:</span>
+            <span className="filter-value">{region || "All"}</span>
+          </div>
         </div>
 
         <select
@@ -59,6 +43,21 @@ const FilterBar = ({
           <option value="rating">Rating</option>
           <option value="name">Name</option>
         </select>
+      </div>
+
+      <div className="filter-chips">
+        {CATEGORY_OPTIONS.map((category) => (
+          <button
+            key={category}
+            type="button"
+            className={`filter-chip ${
+              selectedCategory === category ? "active" : ""
+            }`}
+            onClick={() => onCategoryChange({ category })}
+          >
+            {category}
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -1,18 +1,44 @@
 :root {
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR",
-    sans-serif;
-  color: #111;
-  background: #fff;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --text: #111111;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.05);
+  --radius: 16px;
+  --radius-sm: 12px;
+  --primary: #111111;
+  --primary-soft: rgba(17, 17, 17, 0.08);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR",
+    sans-serif;
 }
 
 a {
   color: inherit;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+::selection {
+  background: rgba(17, 17, 17, 0.12);
 }
