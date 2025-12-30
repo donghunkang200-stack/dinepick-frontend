@@ -65,3 +65,7 @@
   object-fit: cover;
   display: block;
 }
+.hero-search button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

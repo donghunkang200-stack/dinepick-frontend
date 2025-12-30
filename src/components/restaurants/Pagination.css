@@ -1,0 +1,23 @@
+.pagination {
+  margin: 26px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.page-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background: #f3f3f3;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.page-button.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}

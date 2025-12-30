@@ -122,3 +122,7 @@
     grid-template-columns: 1fr;
   }
 }
+.logo {
+  text-decoration: none;
+  color: inherit;
+}

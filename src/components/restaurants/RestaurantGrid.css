@@ -1,0 +1,36 @@
+.restaurant-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.restaurant-empty {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  background: #fafafa;
+}
+
+.restaurant-empty-title {
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.restaurant-empty-desc {
+  font-size: 13px;
+  color: #666;
+}
+
+@media (max-width: 900px) {
+  .restaurant-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .restaurant-grid {
+    grid-template-columns: 1fr;
+  }
+}
