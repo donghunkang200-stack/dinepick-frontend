@@ -8,16 +8,23 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./contexts/AuthContext";
 import AuthRedirect from "./routes/AuthRedirect";
 import MyPage from "./pages/MyPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App = () => {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
-
         <Route path="/restaurants" element={<RestaurantsPage />} />
         <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
-        <Route path="/me" element={<MyPage />} />
+        <Route
+          path="/me"
+          element={
+            <ProtectedRoute>
+              <MyPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/login"
           element={
@@ -34,7 +41,6 @@ const App = () => {
             </AuthRedirect>
           }
         />
-
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ToastContainer position="top-center" autoClose={3000} theme="light" />
