@@ -20,8 +20,6 @@ const HomePage = () => {
 
       {/* Reusable content sections */}
       <SectionGrid title="섹션 제목" />
-      <SectionGrid title="섹션 제목" />
-      <SectionGrid title="섹션 제목" />
 
       {/* Testimonials section */}
       <Testimonials />
