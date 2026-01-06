@@ -24,7 +24,7 @@ const MyPage = () => {
         <ProfileBanner />
 
         {/* 요약 통계 카드 */}
-        <StatsCards />
+        <StatsCards onSelect={setActiveTab} />
 
         {/* 탭 메뉴 */}
         <MyPageTabs activeTab={activeTab} onChangeTab={setActiveTab} />
