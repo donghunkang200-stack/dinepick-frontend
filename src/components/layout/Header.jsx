@@ -6,8 +6,8 @@ const Header = ({ children }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  const onLogout = () => {
-    logout();
+  const onLogout = async () => {
+    await logout();
     navigate("/");
   };
 

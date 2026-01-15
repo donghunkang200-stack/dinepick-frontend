@@ -11,3 +11,9 @@ export async function login({ email, password }) {
   const res = await http.post("/api/auth/login", { email, password });
   return res.data;
 }
+
+// 로그아웃 API
+export async function logoutApi(refreshToken) {
+  const res = await http.post("/api/auth/logout", { refreshToken });
+  return res.data;
+}
