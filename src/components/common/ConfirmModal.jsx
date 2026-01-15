@@ -1,14 +1,6 @@
+import { createPortal } from "react-dom";
 import "./ConfirmModal.css";
 
-/*
-  ConfirmModal
-  - open: boolean
-  - title: string
-  - message: string (줄바꿈 포함 가능)
-  - confirmText / cancelText: 버튼 텍스트
-  - onConfirm / onClose: 콜백
-  - loading: 확인 버튼 로딩/비활성화
-*/
 export default function ConfirmModal({
   open,
   title = "확인",
@@ -21,12 +13,12 @@ export default function ConfirmModal({
 }) {
   if (!open) return null;
 
-  const handleBackdropClick = (e) => {
+  const handleBackdropMouseDown = (e) => {
     if (e.target === e.currentTarget && !loading) onClose?.();
   };
 
-  return (
-    <div className="cm-backdrop" onMouseDown={handleBackdropClick}>
+  const node = (
+    <div className="cm-backdrop" onMouseDown={handleBackdropMouseDown}>
       <div
         className="cm-modal"
         role="dialog"
@@ -38,7 +30,6 @@ export default function ConfirmModal({
         </div>
 
         <div className="cm-body">
-          {/* 줄바꿈 유지 */}
           <pre className="cm-message">{message}</pre>
         </div>
 
@@ -64,4 +55,7 @@ export default function ConfirmModal({
       </div>
     </div>
   );
+
+  // ✅ body로 직접 렌더 (부모 transform/filter 영향 완전 차단)
+  return createPortal(node, document.body);
 }
