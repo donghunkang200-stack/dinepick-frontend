@@ -1,10 +1,10 @@
-# 🍽️ DinePick Frontend
+#  DinePick Frontend
 
 레스토랑 예약 서비스 **DinePick**의 프론트엔드 웹 애플리케이션입니다.
 
 ---
 
-## 📋 프로젝트 개요
+##  프로젝트 개요
 
 **DinePick**은 사용자가 레스토랑을 탐색하고 예약·즐겨찾기·마이페이지 기능을 이용할 수 있는  
 **레스토랑 예약 플랫폼**입니다.
@@ -20,9 +20,9 @@
 
 ---
 
-## 🛠 기술 스택
+##  기술 스택
 
-### ✨ Front-End
+###  Front-End
 
 - **Framework**: React 18
 - **Language**: JavaScript (ES6+)
@@ -32,16 +32,16 @@
 - **Styling**: CSS / Custom CSS
 - **State Management**: React Hooks (useState, useEffect, Context)
 
-### 🔗 Back-End 연동
+###  Back-End 연동
 
 - RESTful API (Spring Boot)
 - JWT 기반 인증 API (Access Token + Refresh Token)
 
 ---
 
-## 📦 주요 기능
+##  주요 기능
 
-### ✅ 인증 및 회원 관리
+###  인증 및 회원 관리
 
 - **회원가입 / 로그인**
 - **JWT 기반 인증**
@@ -55,7 +55,7 @@
   - 특정 회원 조회
   - 회원 복구
 
-### 🍽 레스토랑 관리
+###  레스토랑 관리
 
 - **레스토랑 목록 조회**
 - **검색 기능**
@@ -65,7 +65,7 @@
 - **위치 기반 주변 레스토랑 검색**
   - 거리순 정렬 결과 UI 제공
 
-### 📅 예약 관리
+###  예약 관리
 
 - **실시간 예약 가능 여부 확인**
   - 예약 가능/불가 상태에 따른 UI 분기
@@ -76,7 +76,7 @@
 
 ---
 
-## 🏗 프로젝트 구조
+##  프로젝트 구조
 
 ```bash
 src
