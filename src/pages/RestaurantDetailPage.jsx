@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import { fetchRestaurantById, fetchRestaurants } from "../api/restaurants";
-
+import DetailPageSkeleton from "../components/restaurant-detail/DetailPageSkeleton";
 import DetailHero from "../components/restaurant-detail/DetailHero";
 import DetailInfoCard from "../components/restaurant-detail/DetailInfoCard";
 import DetailMapCard from "../components/restaurant-detail/DetailMapCard";
@@ -81,8 +81,8 @@ const RestaurantDetailPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="container detail-container">
-          <h2 className="detail-not-found-title">로딩중...</h2>
+        <div className="container">
+          <DetailPageSkeleton />
         </div>
       </Layout>
     );

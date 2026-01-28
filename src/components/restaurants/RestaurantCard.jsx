@@ -48,25 +48,23 @@ const RestaurantCard = ({ item }) => {
           <h3 className="restaurant-name">{name || " "}</h3>
         </div>
 
-        {/* 카테고리 */}
-        <div className="restaurant-meta">
+        {/* 카테고리 + Details 같은 줄 */}
+        <div
+          className="restaurant-meta"
+          onClick={(e) => e.stopPropagation()} // 버튼 클릭 시 카드 이동 방지
+        >
           {category && (
             <span className="restaurant-chip" aria-label="Category">
               {category}
             </span>
           )}
-        </div>
 
-        {/* 액션 버튼 (카드 클릭 전파 방지) */}
-        <div
-          className="restaurant-actions"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button type="button" className="restaurant-action">
+          <button
+            type="button"
+            className="restaurant-action details-btn"
+            onClick={handleOpenDetail}
+          >
             Details
-          </button>
-          <button type="button" className="restaurant-action primary">
-            Reserve
           </button>
         </div>
       </div>

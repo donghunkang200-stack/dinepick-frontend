@@ -16,6 +16,61 @@
   display: grid;
   gap: 12px;
 }
+/* Hero select: 검색바 테마에 맞춘 깔끔한 드롭다운 */
+.hero-select {
+  height: 42px;
+  min-width: 92px;
+
+  border: 0;
+  outline: 0;
+  background: transparent;
+
+  /* input과 비슷한 톤 */
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+
+  /* 좌우 여백 + 오른쪽 화살표 공간 */
+  padding: 0 34px 0 8px;
+
+  /* 기본 UI 제거 */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* 커스텀 화살표(chevron) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 20 20'%3E%3Cpath fill='%236b7280' d='M5.5 7.5a1 1 0 0 1 1.4 0L10 10.6l3.1-3.1a1 1 0 1 1 1.4 1.4l-3.8 3.8a1 1 0 0 1-1.4 0L5.5 8.9a1 1 0 0 1 0-1.4Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+
+  /* 살짝 클릭 가능한 느낌 */
+  cursor: pointer;
+
+  /* input과 구분되도록 아주 은은한 구분선 */
+  border-right: 1px solid rgba(17, 24, 39, 0.08);
+  padding-right: 38px;
+  margin-right: 2px;
+
+  transition: filter 0.15s ease;
+}
+
+.hero-select:hover {
+  filter: brightness(0.98);
+}
+
+/* 키보드 포커스 접근성 (전체 hero-search 포커스 효과와도 자연스럽게) */
+.hero-select:focus {
+  outline: none;
+}
+
+/* option은 브라우저 네이티브 UI라 큰 커스텀은 안되지만,
+   최소한 폰트 톤만 맞춰줌 */
+.hero-select option {
+  font-weight: 700;
+}
+
+/* 모바일에서 select가 너무 좁게 느껴지면 폭 살짝 키우기 */
 
 .hero-title {
   margin: 0;
@@ -45,7 +100,9 @@
   background: var(--surface);
   box-shadow: var(--shadow-sm);
 
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .hero-search:focus-within {
@@ -81,7 +138,10 @@
   cursor: pointer;
   font-weight: 800;
 
-  transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .hero-search button:hover {
@@ -150,5 +210,9 @@
   .hero-image {
     aspect-ratio: 4 / 3;
     max-height: 220px;
+  }
+  .hero-select {
+    min-width: 84px;
+    padding-left: 6px;
   }
 }
