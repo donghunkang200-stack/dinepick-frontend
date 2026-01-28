@@ -1,7 +1,8 @@
 .mypage {
   padding: 18px 0 40px;
 }
-/* 컨테이너 */
+
+/* 페이저 컨테이너 */
 .pager-minimal {
   display: flex;
   align-items: center;
@@ -10,7 +11,7 @@
   margin: 12px 0 4px;
 }
 
-/* 버튼: 텍스트 버튼 느낌 */
+/* 페이지 이동 버튼 */
 .pager-btn {
   background: none;
   border: none;
@@ -24,18 +25,26 @@
   transition: opacity 0.15s ease;
 }
 
+/* hover 시 강조 */
 .pager-btn:hover:not(:disabled) {
   opacity: 0.6;
 }
 
+/* 비활성화 상태 */
 .pager-btn:disabled {
   opacity: 0.25;
   cursor: not-allowed;
 }
 
-/* 가운데 텍스트 */
+/* 현재 페이지 텍스트 */
 .pager-text {
   font-size: 13px;
   color: #777;
   letter-spacing: 0.2px;
+}
+.mypage-card {
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 16px;
+  padding: 16px;
 }

@@ -1,21 +1,14 @@
-// src/components/mypage/MyPageTabs.jsx
 import "./MyPageTabs.css";
 
-/*
-  MyPageTabs
-  - 탭 버튼 렌더링 (예약/찜/리뷰)
-  - 접근성(role/tablist) + 키보드 이동 지원
-*/
+// 마이페이지 탭(추후 기능추가 시 확장 가능)
 const TABS = [
   { key: "reservations", label: "예약 내역" },
-  { key: "favorites", label: "찜한 레스토랑" },
-  { key: "reviews", label: "내 리뷰" },
+  { key: "profile", label: "내 정보" },
 ];
 
 const DEFAULT_TAB = "reservations";
 
 const MyPageTabs = ({ activeTab = DEFAULT_TAB, onChangeTab }) => {
-  // activeTab 방어
   const safeTab = TABS.some((t) => t.key === activeTab)
     ? activeTab
     : DEFAULT_TAB;
@@ -23,12 +16,9 @@ const MyPageTabs = ({ activeTab = DEFAULT_TAB, onChangeTab }) => {
   const currentIndex = TABS.findIndex((t) => t.key === safeTab);
 
   const handleChange = (key) => {
-    if (typeof onChangeTab === "function") {
-      onChangeTab(key);
-    }
+    if (typeof onChangeTab === "function") onChangeTab(key);
   };
 
-  // 키보드 좌/우 이동
   const handleKeyDown = (e) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
 

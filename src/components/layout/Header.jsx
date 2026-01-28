@@ -2,10 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Layout.css";
 import { useAuth } from "../../contexts/AuthContext";
 
+// 헤더
 const Header = ({ children }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
+  const isAdmin = user?.role === "ROLE_ADMIN";
+
+  // 로그아웃 처리 후 홈 이동
   const onLogout = async () => {
     await logout();
     navigate("/");
@@ -15,12 +19,19 @@ const Header = ({ children }) => {
     <>
       <header className="header">
         <div className="container header-inner">
-          <h2 style={{ margin: 0 }}>
-            <Link to="/" className="logo" aria-label="Go to home">
-              DINE PICK
-            </Link>
-          </h2>
-
+          {isAdmin ? (
+            <h2 style={{ margin: 0 }}>
+              <Link to="/" className="logo" aria-label="Go to home">
+                DINE PICK ADMIN
+              </Link>
+            </h2>
+          ) : (
+            <h2 style={{ margin: 0 }}>
+              <Link to="/" className="logo" aria-label="Go to home">
+                DINE PICK
+              </Link>
+            </h2>
+          )}
           <nav className="nav">
             <Link to="/restaurants" className="nav-link">
               레스토랑
@@ -28,6 +39,14 @@ const Header = ({ children }) => {
 
             {isAuthenticated ? (
               <>
+                {/* ✅ 관리자 전용 메뉴 */}
+                {isAdmin && (
+                  <Link to="/admin" className="nav-link">
+                    관리자
+                  </Link>
+                )}
+
+                {/* 인증 완료 시 헤더 */}
                 <span className="nav-user">
                   {user?.name ? `${user.name} 님` : "로그인됨"}
                 </span>
@@ -36,12 +55,17 @@ const Header = ({ children }) => {
                   마이페이지
                 </Link>
 
-                <button className="nav-link nav-logout" onClick={onLogout}>
+                <button
+                  type="button"
+                  className="nav-link nav-logout"
+                  onClick={onLogout}
+                >
                   로그아웃
                 </button>
               </>
             ) : (
               <>
+                {/* 비인증 시 헤더 */}
                 <Link to="/login" className="nav-link">
                   로그인
                 </Link>

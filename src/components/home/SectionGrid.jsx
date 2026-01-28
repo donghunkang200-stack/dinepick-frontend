@@ -3,20 +3,17 @@ import "./SectionGrid.css";
 import { fetchRestaurants } from "../../api/restaurants";
 import { useNavigate } from "react-router-dom";
 
-const FALLBACK_IMG = "/sushi.jpg"; // public/sushi.jpg
+const FALLBACK_IMG = "/sushi.jpg";
 
-/**
- * Home SectionGrid
- * - 홈 추천 식당 전용
- * - category로만 필터
- * - 항상 첫 페이지 + size 고정
- */
 const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
   const navigate = useNavigate();
+
+  // 상태
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // 홈 추천 식당 로드(카테고리/사이즈 변경 시)
   useEffect(() => {
     let alive = true;
 
@@ -26,17 +23,17 @@ const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
         setError("");
 
         const data = await fetchRestaurants({
-          category, // 홈 카테고리 필터
+          category,
           page: 0,
           size,
         });
 
         if (!alive) return;
-
         setItems(Array.isArray(data?.content) ? data.content : []);
       } catch (e) {
         console.error(e);
         if (!alive) return;
+
         setError("레스토랑을 불러오지 못했어요.");
         setItems([]);
       } finally {
@@ -65,8 +62,10 @@ const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
 
         <div className="grid">
           {items.map((r) => {
-            // 썸네일 적용
+            // 썸네일 fallback 처리
             const imgSrc = r.thumbnailUrl || FALLBACK_IMG;
+
+            const goDetail = () => navigate(`/restaurants/${r.id}`);
 
             return (
               <article
@@ -74,10 +73,9 @@ const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
                 className="card"
                 role="button"
                 tabIndex={0}
-                onClick={() => navigate(`/restaurants/${r.id}`)}
+                onClick={goDetail}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ")
-                    navigate(`/restaurants/${r.id}`);
+                  if (e.key === "Enter" || e.key === " ") goDetail();
                 }}
               >
                 <img
@@ -88,6 +86,7 @@ const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
                     e.currentTarget.src = FALLBACK_IMG;
                   }}
                 />
+
                 <div className="card-body">
                   <h3 className="card-title">{r.name}</h3>
                   <p className="card-description">{r.description}</p>

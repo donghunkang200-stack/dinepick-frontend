@@ -1,31 +1,36 @@
 .detail-container {
+  /* 상세 페이지 전체 여백 */
   padding: 18px 0 32px;
 }
 
 .detail-not-found-title {
+  /* 상세 페이지를 찾을 수 없을 때 제목 여백 */
   margin: 16px 0 10px;
 }
 
-/* Page grid layout */
+/* 상세 페이지 전체 영역(좌-콘텐츠, 우-사이드 패널) */
 .detail-grid {
   margin-top: 16px;
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 320px; /* 메인 + 사이드 */
   gap: 18px;
   align-items: start;
 }
 
+/* 왼쪽 메인 영역 */
 .detail-left {
   display: grid;
   gap: 14px;
 }
 
+/* 오른쪽 예약/사이드 영역 */
 .detail-right {
-  position: sticky;
-  top: 90px;
+  position: sticky; /* 스크롤 시 고정 */
+  top: 90px; /* 헤더 아래에서 고정 */
   align-self: start;
 }
 
+/* 반응형 */
 @media (max-width: 980px) {
   .detail-grid {
     grid-template-columns: 1fr;

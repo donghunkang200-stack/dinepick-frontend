@@ -7,7 +7,7 @@
   padding: 48px 16px;
 }
 
-/* 로그인/회원가입 카드 */
+/* 로그인 / 회원가입 카드 */
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -28,17 +28,19 @@
   color: #111;
 }
 
-/* 폼 */
+/* 폼 레이아웃 */
 .auth-form {
   display: grid;
   gap: 14px;
 }
 
+/* 입력 필드 그룹 */
 .auth-field {
   display: grid;
   gap: 8px;
 }
 
+/* 라벨 */
 .auth-label {
   font-size: 13px;
   font-weight: 800;
@@ -52,9 +54,8 @@
   border-radius: 14px;
   border: 1px solid rgba(17, 24, 39, 0.14);
   font-size: 14px;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   background: #fff;
+  outline: none;
 }
 
 .auth-input::placeholder {
@@ -66,7 +67,7 @@
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
 }
 
-/* 버튼 */
+/* 제출 버튼 */
 .auth-btn {
   margin-top: 6px;
   padding: 12px 14px;
@@ -77,8 +78,6 @@
   font-size: 14px;
   font-weight: 900;
   cursor: pointer;
-  transition: transform 0.12s ease, background 0.18s ease,
-    border-color 0.18s ease;
 }
 
 .auth-btn:hover {
@@ -93,7 +92,7 @@
   transform: none;
 }
 
-/* 푸터 링크 */
+/* 하단 안내 영역 */
 .auth-foot {
   margin: 16px 0 0;
   text-align: center;
@@ -101,6 +100,7 @@
   color: rgba(17, 24, 39, 0.62);
 }
 
+/* 링크 */
 .auth-link {
   font-weight: 900;
   color: rgba(79, 70, 229, 0.92);

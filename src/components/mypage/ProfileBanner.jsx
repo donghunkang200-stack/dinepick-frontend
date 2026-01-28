@@ -1,12 +1,8 @@
-// src/components/mypage/ProfileBanner.jsx
 import "./ProfileBanner.css";
 
-/*
-  ProfileBanner
-  - 사용자 정보 표시 (user를 props로 받는 방식)
-  - AuthContext 의존 제거 → 재사용/안정성 ↑
-*/
+// 프로필 배너
 const ProfileBanner = ({ user }) => {
+  // 표시용 이름/서브텍스트
   const name = user?.name?.trim?.() ? user.name : "회원";
   const subtitle = user?.email?.trim?.()
     ? user.email
@@ -14,6 +10,7 @@ const ProfileBanner = ({ user }) => {
 
   return (
     <section className="profile-banner" aria-label="프로필 배너">
+      {/* 추후 프로필 사진 추가 */}
       <div className="profile-avatar" aria-hidden="true">
         🙂
       </div>

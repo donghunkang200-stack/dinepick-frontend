@@ -2,18 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { loadKakaoMaps } from "../../utils/kakaoLoader";
 import "./DetailMapCard.css";
 
-/*
-  DetailMapCard (Address-based)
-  - Always geocode restaurant.address -> LatLng
-  - Set map center + marker by geocoded result
-  - Add "My Location" pulsing dot overlay (optional, if geolocation available)
-*/
+// 레스토랑 주소를 지오코딩해서 지도 중심/마커를 찍는 상세 위치 카드
 const DetailMapCard = ({ restaurant }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
 
-  // my location overlay refs
+  // 내 위치(펄스) 오버레이 관리
   const myLocOverlayRef = useRef(null);
   const injectedPulseCssRef = useRef(false);
 
@@ -23,11 +18,11 @@ const DetailMapCard = ({ restaurant }) => {
 
   const { name = "", address = "" } = restaurant;
 
+  // 내 위치 펄스 CSS를 1회만 주입(다른 컴포넌트에서 이미 넣었을 수도 있음)
   const ensurePulseCss = () => {
     if (injectedPulseCssRef.current) return;
     injectedPulseCssRef.current = true;
 
-    // 이미 다른 컴포넌트에서 넣었을 수도 있으니 중복 방지
     if (document.querySelector('style[data-my-location-pulse="1"]')) return;
 
     const style = document.createElement("style");
@@ -62,13 +57,14 @@ const DetailMapCard = ({ restaurant }) => {
     document.head.appendChild(style);
   };
 
+  // 내 위치 오버레이 제거(언마운트/재초기화 대비)
   const clearMyLoc = () => {
-    if (myLocOverlayRef.current) {
-      myLocOverlayRef.current.setMap(null);
-      myLocOverlayRef.current = null;
-    }
+    if (!myLocOverlayRef.current) return;
+    myLocOverlayRef.current.setMap(null);
+    myLocOverlayRef.current = null;
   };
 
+  // 내 위치 도트 오버레이를 생성하거나, 있으면 위치만 갱신
   const showMyLocPulse = (kakao, map, lat, lng) => {
     if (!kakao || !map) return;
 
@@ -83,16 +79,15 @@ const DetailMapCard = ({ restaurant }) => {
     }
 
     const el = document.createElement("div");
-    el.className = "kakao-overlay my-loc-wrap"; // wrapper 클래스 추가
+    el.className = "kakao-overlay my-loc-wrap";
 
     const dot = document.createElement("div");
     dot.className = "my-loc";
     el.appendChild(dot);
-    // 지도 클릭 이벤트로 전파 방지
-    ["click", "mousedown", "mouseup", "touchstart", "touchend"].forEach(
-      (evt) => {
-        el.addEventListener(evt, (e) => e.stopPropagation());
-      }
+
+    // 오버레이 클릭이 지도 이벤트로 전파되지 않도록 차단
+    ["click", "mousedown", "mouseup", "touchstart", "touchend"].forEach((evt) =>
+      el.addEventListener(evt, (e) => e.stopPropagation())
     );
 
     myLocOverlayRef.current = new kakao.maps.CustomOverlay({
@@ -116,22 +111,22 @@ const DetailMapCard = ({ restaurant }) => {
         const kakao = await loadKakaoMaps();
         if (!mounted || !mapContainerRef.current) return;
 
-        // 1) 지도 먼저 생성 (fallback center)
-        const fallback = new kakao.maps.LatLng(37.5665, 126.978); // Seoul City Hall
+        // 지도 생성(초기 중심은 fallback)
+        const fallback = new kakao.maps.LatLng(37.5665, 126.978);
         const map = new kakao.maps.Map(mapContainerRef.current, {
           center: fallback,
           level: 3,
         });
         mapRef.current = map;
 
-        // 2) 레스토랑 마커 (fallback)
+        // 마커 생성/갱신(초기 위치는 fallback)
         const marker =
           markerRef.current || new kakao.maps.Marker({ position: fallback });
         marker.setMap(map);
         marker.setPosition(fallback);
         markerRef.current = marker;
 
-        // 2.5) 내 위치 도트 표시 시도 (권한 거부면 그냥 무시)
+        // 브라우저 위치 권한이 있으면 내 위치 펄스 표시
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -143,21 +138,18 @@ const DetailMapCard = ({ restaurant }) => {
                 pos.coords.longitude
               );
             },
-            () => {
-              // 권한 거부/실패 시 조용히 무시
-            },
+            () => {},
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
           );
         }
 
-        // 3) 주소 없으면 안내 후 종료
+        // 주소가 없으면 지오코딩 생략
         if (!address?.trim()) {
           setHint("주소 정보가 없어 기본 위치로 표시됩니다.");
           return;
         }
 
-        // 4) 주소 -> 좌표 (Geocoder)
-        // libraries=services 가 로더에 포함돼야 함
+        // 주소 -> 좌표 변환 후 지도/마커 이동
         const geocoder = new kakao.maps.services.Geocoder();
 
         geocoder.addressSearch(address, (result, status) => {
@@ -168,13 +160,13 @@ const DetailMapCard = ({ restaurant }) => {
             return;
           }
 
-          const { x, y } = result[0]; // x: lng, y: lat
+          const { x, y } = result[0];
           const pos = new kakao.maps.LatLng(Number(y), Number(x));
 
           map.setCenter(pos);
           marker.setPosition(pos);
 
-          // (선택) 인포윈도우
+          // 마커 인포윈도우(선택)
           if (name) {
             const iw = new kakao.maps.InfoWindow({
               content: `<div style="padding:6px 8px;font-size:12px;">${name}</div>`,
@@ -183,7 +175,7 @@ const DetailMapCard = ({ restaurant }) => {
           }
         });
 
-        // 5) 렌더 타이밍 이슈 대비 relayout
+        // 컨테이너 레이아웃 반영 타이밍 보정
         setTimeout(() => {
           if (!mounted) return;
           map.relayout();
@@ -198,11 +190,11 @@ const DetailMapCard = ({ restaurant }) => {
 
     return () => {
       mounted = false;
+
       if (markerRef.current) markerRef.current.setMap(null);
       markerRef.current = null;
       mapRef.current = null;
 
-      // my location overlay cleanup
       clearMyLoc();
     };
   }, [address, name]);
@@ -213,11 +205,9 @@ const DetailMapCard = ({ restaurant }) => {
         <h2 className="detail-card-title">위치</h2>
       </header>
 
-      {/* 지도 히어로 영역 */}
       <div className="detail-map-hero">
         <div ref={mapContainerRef} className="detail-map-hero-bg" />
 
-        {/* 오버레이 카드 */}
         <div className="detail-map-hero-overlay">
           <div className="detail-map-text">
             <div className="detail-map-name">{name || " "}</div>

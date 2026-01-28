@@ -1,30 +1,26 @@
 import "./DetailInfoCard.css";
 
-/*
-  DetailInfoCard
-  - Restaurant info summary
-  - Uses only available backend fields
-*/
+// 레스토랑 상세 정보 카드
 const DetailInfoCard = ({ restaurant }) => {
   if (!restaurant) return null;
 
+  // 레스토랑 정보
   const {
     address = "",
     description = "",
     maxPeoplePerReservation = null,
-
-    // 더미 기본값 제거
     openingHours = "",
     phone = "",
     priceRange = "",
   } = restaurant;
 
+  // 최대 예약 인원 숫자 처리
   const maxPeopleNum =
     maxPeoplePerReservation === null || maxPeoplePerReservation === undefined
       ? null
       : Number(maxPeoplePerReservation);
 
-  // 값 있는 것만 렌더
+  // 값이 있는 항목만 리스트로 구성
   const rows = [
     { label: "영업시간", value: openingHours?.trim?.() ? openingHours : "" },
     { label: "주소", value: address?.trim?.() ? address : "" },
@@ -62,9 +58,7 @@ const DetailInfoCard = ({ restaurant }) => {
         </p>
       )}
 
-      {hasDescription ? (
-        <p className="detail-description">{description}</p>
-      ) : null}
+      {hasDescription && <p className="detail-description">{description}</p>}
     </article>
   );
 };

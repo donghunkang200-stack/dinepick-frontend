@@ -1,3 +1,4 @@
+/* 프로필 배너 */
 .profile-banner {
   border-radius: 14px;
   background: #ef4444;
@@ -9,6 +10,7 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* 아바타 */
 .profile-avatar {
   width: 42px;
   height: 42px;
@@ -20,6 +22,7 @@
   font-size: 18px;
 }
 
+/* 텍스트 */
 .profile-text {
   display: grid;
   gap: 4px;

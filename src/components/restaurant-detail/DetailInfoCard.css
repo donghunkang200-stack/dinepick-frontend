@@ -1,3 +1,4 @@
+/* 상세 정보 카드 */
 .detail-card {
   border: 1px solid #e5e7eb;
   border-radius: 16px;
@@ -6,6 +7,7 @@
   padding: 14px;
 }
 
+/* 카드 헤더 */
 .detail-card-header {
   margin-bottom: 10px;
 }
@@ -17,11 +19,13 @@
   letter-spacing: -0.2px;
 }
 
+/* 정보 리스트 */
 .detail-info-list {
   display: grid;
   gap: 8px;
 }
 
+/* 한 줄 정보 (라벨 / 값) */
 .detail-info-row {
   display: flex;
   justify-content: space-between;
@@ -39,6 +43,7 @@
   text-align: right;
 }
 
+/* 설명 텍스트 */
 .detail-description {
   margin: 12px 0 0;
   color: #6b7280;

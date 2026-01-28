@@ -5,15 +5,17 @@ import { useGeolocation } from "../../hooks/useGeolocation";
 import { fetchNearbyRestaurants } from "../../api/restaurants";
 import "./nearMeMap.css";
 
-// fallback (원하면 변경)
+// 기본 위치(권한 거부/미지원 시)
 const DEFAULT_POS = { lat: 35.1502336, lng: 129.0600448 };
 
+// 반경 값 보정
 function clampRadiusKm(v) {
   const n = Number(v);
   if (Number.isNaN(n)) return 10;
   return Math.min(Math.max(n, 0.1), 30);
 }
 
+// 주소 변환 동시 요청 제한
 async function mapWithConcurrency(items, mapper, concurrency = 5) {
   const results = new Array(items.length);
   let idx = 0;
@@ -27,7 +29,7 @@ async function mapWithConcurrency(items, mapper, concurrency = 5) {
 
   const workers = Array.from(
     { length: Math.min(concurrency, items.length) },
-    worker
+    worker,
   );
   await Promise.all(workers);
   return results;
@@ -38,43 +40,51 @@ export default function NearMeMap({
   keyword = "",
   category = "ALL",
   page = 0,
-  size = 30, // 리스트 없음 → 마커용으로 넉넉히
+  size = 30,
   height = 420,
   useFallbackWhenDenied = true,
 }) {
   const navigate = useNavigate();
   const { loaded, coords, error } = useGeolocation();
 
+  // 검색 폼 입력값
   const [q, setQ] = useState("");
 
+  // 안전 반경
   const safeRadiusKm = useMemo(() => clampRadiusKm(radiusKm), [radiusKm]);
 
+  // 지도 컨테이너
   const containerRef = useRef(null);
 
+  // 카카오 지도 참조
   const kakaoRef = useRef(null);
   const mapRef = useRef(null);
   const geocoderRef = useRef(null);
 
-  const markersRef = useRef([]); // restaurant markers
-  const overlayRef = useRef(null); // restaurant info overlay (single)
+  // 마커/오버레이 참조
+  const markersRef = useRef([]);
+  const overlayRef = useRef(null);
 
-  // my location pulse overlay
+  // 내 위치(펄스) 오버레이
   const myLocationOverlayRef = useRef(null);
   const injectedPulseCssRef = useRef(false);
 
-  // address -> {lat,lng} cache
+  // 주소 좌표 캐시
   const geoCacheRef = useRef(new Map());
 
+  // 상태
   const [mapStatus, setMapStatus] = useState("idle"); // idle|loading|ready|error
   const [loadingData, setLoadingData] = useState(false);
   const [apiError, setApiError] = useState(null);
 
+  // 기준 위치(현재 위치 or fallback)
   const basePos = useMemo(() => {
     if (coords) return coords;
     if (loaded && !coords && useFallbackWhenDenied) return DEFAULT_POS;
     return null;
   }, [coords, loaded, useFallbackWhenDenied]);
 
+  // 내 위치 펄스 CSS 1회 주입
   const ensurePulseCss = () => {
     if (injectedPulseCssRef.current) return;
     injectedPulseCssRef.current = true;
@@ -111,19 +121,21 @@ export default function NearMeMap({
     document.head.appendChild(style);
   };
 
+  // 식당 오버레이 제거
   const clearOverlay = () => {
-    if (overlayRef.current) {
-      overlayRef.current.setMap(null);
-      overlayRef.current = null;
-    }
+    if (!overlayRef.current) return;
+    overlayRef.current.setMap(null);
+    overlayRef.current = null;
   };
 
+  // 식당 마커/오버레이 초기화
   const clearRestaurantMarkers = () => {
     clearOverlay();
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
   };
 
+  // 내 위치 펄스 표시/갱신
   const setMyLocationPulse = (pos) => {
     const kakao = kakaoRef.current;
     const map = mapRef.current;
@@ -133,7 +145,6 @@ export default function NearMeMap({
 
     const ll = new kakao.maps.LatLng(pos.lat, pos.lng);
 
-    // 있으면 위치만 갱신
     if (myLocationOverlayRef.current) {
       myLocationOverlayRef.current.setPosition(ll);
       myLocationOverlayRef.current.setMap(map);
@@ -143,11 +154,9 @@ export default function NearMeMap({
     const el = document.createElement("div");
     el.className = "my-loc";
 
-    // 오버레이 내부 이벤트가 지도 이벤트로 전파되지 않도록
-    ["click", "mousedown", "mouseup", "touchstart", "touchend"].forEach(
-      (evt) => {
-        el.addEventListener(evt, (e) => e.stopPropagation());
-      }
+    // 오버레이 클릭 이벤트 전파 차단
+    ["click", "mousedown", "mouseup", "touchstart", "touchend"].forEach((evt) =>
+      el.addEventListener(evt, (e) => e.stopPropagation()),
     );
 
     myLocationOverlayRef.current = new kakao.maps.CustomOverlay({
@@ -161,6 +170,7 @@ export default function NearMeMap({
     myLocationOverlayRef.current.setMap(map);
   };
 
+  // 주소 -> 좌표 변환(캐시 포함)
   const geocodeAddress = (address) => {
     const kakao = kakaoRef.current;
     const geocoder = geocoderRef.current;
@@ -178,7 +188,7 @@ export default function NearMeMap({
           resolve(null);
           return;
         }
-        const { y, x } = result[0]; // y: lat, x: lng
+        const { y, x } = result[0];
         const coord = { lat: Number(y), lng: Number(x) };
         geoCacheRef.current.set(key, coord);
         resolve(coord);
@@ -186,6 +196,7 @@ export default function NearMeMap({
     });
   };
 
+  // 식당 마커 클릭 시 상세 오버레이 표시
   const showRestaurantOverlay = (restaurant, positionLatLng) => {
     const kakao = kakaoRef.current;
     const map = mapRef.current;
@@ -193,7 +204,6 @@ export default function NearMeMap({
 
     clearOverlay();
 
-    // ====== wrapper ======
     const wrap = document.createElement("div");
     wrap.style.background = "white";
     wrap.style.border = "1px solid rgba(0,0,0,0.08)";
@@ -205,14 +215,11 @@ export default function NearMeMap({
     wrap.style.fontSize = "13px";
     wrap.style.lineHeight = "1.25";
 
-    // ✅ 오버레이 내부 클릭이 지도 이벤트로 전파되지 않게 차단
-    ["click", "mousedown", "mouseup", "touchstart", "touchend"].forEach(
-      (evt) => {
-        wrap.addEventListener(evt, (e) => e.stopPropagation());
-      }
+    // 오버레이 클릭 이벤트 전파 차단
+    ["click", "mousedown", "mouseup", "touchstart", "touchend"].forEach((evt) =>
+      wrap.addEventListener(evt, (e) => e.stopPropagation()),
     );
 
-    // ====== header row ======
     const header = document.createElement("div");
     header.style.display = "flex";
     header.style.alignItems = "flex-start";
@@ -238,7 +245,6 @@ export default function NearMeMap({
     sub.style.flexWrap = "wrap";
     sub.style.gap = "6px";
 
-    // ====== chips ======
     const makeChip = (text, variant = "neutral") => {
       const chip = document.createElement("span");
       chip.textContent = text;
@@ -270,14 +276,11 @@ export default function NearMeMap({
         ? `${Number(restaurant.distance).toFixed(2)}km`
         : null;
     if (dist) sub.appendChild(makeChip(dist, "blue"));
-
-    if (restaurant.category)
-      sub.appendChild(makeChip(restaurant.category, "neutral"));
+    if (restaurant.category) sub.appendChild(makeChip(restaurant.category));
 
     left.appendChild(title);
     left.appendChild(sub);
 
-    // ====== close button (X) ======
     const closeIcon = document.createElement("button");
     closeIcon.type = "button";
     closeIcon.setAttribute("aria-label", "닫기");
@@ -299,7 +302,6 @@ export default function NearMeMap({
     header.appendChild(left);
     header.appendChild(closeIcon);
 
-    // ====== address row ======
     const addrRow = document.createElement("div");
     addrRow.style.marginTop = "10px";
     addrRow.style.display = "flex";
@@ -323,7 +325,6 @@ export default function NearMeMap({
     addrRow.appendChild(pin);
     addrRow.appendChild(addr);
 
-    // ====== CTA buttons ======
     const actions = document.createElement("div");
     actions.style.display = "flex";
     actions.style.gap = "8px";
@@ -364,7 +365,7 @@ export default function NearMeMap({
     actions.appendChild(detailBtn);
     actions.appendChild(dismissBtn);
 
-    // ====== compose ======
+    // 오버레이 구성
     wrap.appendChild(header);
     wrap.appendChild(addrRow);
     wrap.appendChild(actions);
@@ -379,7 +380,7 @@ export default function NearMeMap({
     overlayRef.current.setMap(map);
   };
 
-  // 1) 지도 초기화 (최초 1회)
+  // 지도 초기화(최초 1회)
   useEffect(() => {
     let cancelled = false;
 
@@ -394,22 +395,19 @@ export default function NearMeMap({
         if (!mapRef.current && containerRef.current) {
           const center = new kakao.maps.LatLng(
             DEFAULT_POS.lat,
-            DEFAULT_POS.lng
+            DEFAULT_POS.lng,
           );
           mapRef.current = new kakao.maps.Map(containerRef.current, {
             center,
             level: 4,
           });
 
-          // ✅ 지도 클릭 시 오버레이 닫기
-          kakao.maps.event.addListener(mapRef.current, "click", () => {
-            clearOverlay();
-          });
-
-          // ✅ 지도 드래그 시작 시 오버레이 닫기
-          kakao.maps.event.addListener(mapRef.current, "dragstart", () => {
-            clearOverlay();
-          });
+          kakao.maps.event.addListener(mapRef.current, "click", clearOverlay);
+          kakao.maps.event.addListener(
+            mapRef.current,
+            "dragstart",
+            clearOverlay,
+          );
         }
 
         if (!geocoderRef.current) {
@@ -428,7 +426,7 @@ export default function NearMeMap({
     };
   }, []);
 
-  // 2) 데이터 로드 + 마커 렌더
+  // 데이터 로드 + 마커 렌더
   useEffect(() => {
     const kakao = kakaoRef.current;
     const map = mapRef.current;
@@ -444,8 +442,6 @@ export default function NearMeMap({
         setLoadingData(true);
 
         clearRestaurantMarkers();
-
-        // 내 위치(펄스)
         setMyLocationPulse(basePos);
 
         const pageResp = await fetchNearbyRestaurants({
@@ -459,14 +455,8 @@ export default function NearMeMap({
         });
 
         const raw = pageResp?.content || [];
+        const candidates = raw.filter((r) => String(r.address || "").trim());
 
-        // 주소 없는 건 제거
-        const candidates = raw.filter((r) => {
-          const a = String(r.address || "").trim();
-          return a.length > 0;
-        });
-
-        // 주소 -> 좌표 (실패 제거)
         const mapped = await mapWithConcurrency(
           candidates,
           async (r) => {
@@ -474,7 +464,7 @@ export default function NearMeMap({
             if (!coord) return null;
             return { ...r, coord };
           },
-          5
+          5,
         );
 
         const okItems = mapped.filter(Boolean);
@@ -490,7 +480,13 @@ export default function NearMeMap({
           marker.setMap(map);
 
           kakao.maps.event.addListener(marker, "click", () => {
-            showRestaurantOverlay(r, pos);
+            // 중심으로 이동
+            map.panTo(pos);
+
+            // 이동 중에는 overlay가 어색할 수 있으니 살짝 딜레이 후 표시
+            setTimeout(() => {
+              showRestaurantOverlay(r, pos);
+            }, 250);
           });
 
           markersRef.current.push(marker);
@@ -512,7 +508,7 @@ export default function NearMeMap({
     run();
   }, [mapStatus, loaded, basePos, safeRadiusKm, keyword, category, page, size]);
 
-  // 3) 언마운트 정리
+  // 언마운트 정리
   useEffect(() => {
     return () => {
       clearRestaurantMarkers();
@@ -524,21 +520,18 @@ export default function NearMeMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 검색 제출(근처/거리 정렬로 목록 페이지 이동)
   const handleNearbySearchSubmit = (e) => {
     e.preventDefault();
     const kw = q.trim();
 
     const params = new URLSearchParams();
     if (kw) params.set("keyword", kw);
-
-    // RestaurantsPage에서 가까운순으로 열리게
     params.set("sort", "distance");
-
-    // (선택) 카테고리도 같이 넘기고 싶으면:
-    // if (category && category !== "ALL") params.set("category", category);
 
     navigate(`/restaurants?${params.toString()}`);
   };
+
   return (
     <section className="nearby-section">
       <div className="nearby-search-wrap">

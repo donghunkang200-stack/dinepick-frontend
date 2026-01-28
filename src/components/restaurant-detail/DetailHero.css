@@ -1,3 +1,4 @@
+/* 상세 페이지 상단 히어로 영역 */
 .detail-hero {
   position: relative;
   border-radius: 18px;
@@ -7,7 +8,7 @@
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
 }
 
-/* 반응형 높이 + 더 안정적인 크롭 */
+/* 상단 대표 이미지 */
 .detail-hero-image {
   width: 100%;
   height: clamp(220px, 26vw, 340px);
@@ -16,7 +17,7 @@
   display: block;
 }
 
-/* 오버레이 가독성 강화 (하단을 조금 더 진하게) */
+/* 이미지 위 그라데이션 오버레이 */
 .detail-hero-overlay {
   position: absolute;
   inset: 0;
@@ -30,6 +31,7 @@
   align-items: flex-end;
 }
 
+/* 제목/버튼 영역 래퍼 */
 .detail-hero-top {
   width: 100%;
   padding: 14px 14px 12px;
@@ -39,11 +41,12 @@
   gap: 12px;
 }
 
-/* 배경 위에서 더 또렷하게 */
+/* 카테고리 + 제목 묶음 */
 .detail-hero-title-group {
-  min-width: 0; /* 긴 텍스트 줄바꿈 안정 */
+  min-width: 0;
 }
 
+/* 카테고리 칩 */
 .detail-hero-category {
   display: inline-flex;
   padding: 6px 10px;
@@ -52,88 +55,49 @@
   color: #fff;
   font-size: 12px;
   font-weight: 900;
-  letter-spacing: -0.2px;
-  backdrop-filter: blur(6px);
 }
 
+/* 레스토랑 이름 */
 .detail-hero-title {
   margin: 8px 0 6px;
   color: #fff;
-  letter-spacing: -0.6px;
   font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 900;
   line-height: 1.15;
-  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-  word-break: keep-all;
 }
 
-/* metaItems 여러개일 때 줄바꿈/정렬 */
+/* 주소/거리 등 메타 정보 */
 .detail-hero-sub {
-  color: rgba(255, 255, 255, 0.92);
   font-size: 13px;
+  color: rgba(255, 255, 255, 0.92);
   display: flex;
-  align-items: center;
-  flex-wrap: wrap; /* ✅ 모바일에서 터짐 방지 */
+  flex-wrap: wrap;
   gap: 6px;
-  line-height: 1.35;
-  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
 }
 
-/* dot 간격을 자연스럽게 */
+/* 메타 구분 점 */
 .detail-hero-dot {
   opacity: 0.8;
   margin: 0 6px;
 }
 
-.detail-hero-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.icon-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 900;
-  transition: transform 0.12s ease, background 0.12s ease,
-    border-color 0.12s ease;
-  backdrop-filter: blur(6px);
-}
-
-.icon-button:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.36);
-}
-
-.icon-button:active {
-  transform: translateY(0);
-}
-
-/* 키보드 접근성 */
+/* 키보드 포커스 */
 .icon-button:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.9);
   outline-offset: 2px;
 }
 
-/* JSX에서 disabled 쓰니까 필수 */
+/* 비활성화 상태 */
 .icon-button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* 모바일에서 레이아웃 깨짐 방지 */
+/* 모바일 레이아웃 */
 @media (max-width: 480px) {
   .detail-hero-top {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
   }
 
   .detail-hero-actions {

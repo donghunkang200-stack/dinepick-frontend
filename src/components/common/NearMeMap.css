@@ -1,18 +1,12 @@
-/* =========================
-   NearMeMap Section Layout
-   ========================= */
-
-/* 타이틀 줄 */
-.nearby-header {
-  text-align: center;
-}
-
+/* 헤더 */
 .nearby-header {
   display: flex;
   flex-direction: column;
-  align-items: center; /* ✅ 핵심 */
+  align-items: center;
   gap: 6px;
+  text-align: center;
 }
+
 .nearby-title {
   font-size: 18px;
   font-weight: 800;
@@ -25,28 +19,20 @@
   opacity: 0.75;
 }
 
-/* =========================
-   Search (Hero-search vibe + same padding rhythm)
-   - 화면을 꽉 채우지 않도록 wrapper 사용
-   ========================= */
-
+/* 검색 래퍼 */
 .nearby-search-wrap {
-  /* Hero container와 비슷한 좌우 여백 */
   padding: 0 16px;
   margin: 0 auto 12px;
-
-  /* 프로젝트 컨테이너 폭과 맞추기 (필요시 조절) */
   max-width: 1200px;
 
-  /* Hero처럼 왼쪽 정렬 (원하면 center로 변경) */
   display: flex;
   justify-content: flex-start;
 }
 
-/* 검색창 자체: wrap 기준으로 max-width 제한 */
+/* 검색창 */
 .nearby-search {
   width: 100%;
-  max-width: 720px; /* ⭐ 체감상 Hero 검색창 폭 */
+  max-width: 720px;
   margin: 0 auto;
 
   display: flex;
@@ -59,7 +45,6 @@
   background: var(--surface);
 }
 
-/* 포커스 강조는 Hero와 동일 톤 */
 .nearby-search:focus-within {
   border-color: rgba(59, 130, 246, 0.45);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
@@ -112,12 +97,7 @@
   filter: none;
 }
 
-/* =========================
-   Map container wrapper
-   - 너 JSX에서 inline 스타일로 border/round 주고 있지만
-     같은 톤으로 쓰려면 클래스로도 제공
-   ========================= */
-
+/* 지도 */
 .nearby-map {
   width: 100%;
   border-radius: 14px;
@@ -125,19 +105,19 @@
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* =========================
-   Message boxes (error / info)
-   ========================= */
-
+/* 메시지 */
 .nearby-message {
   margin-top: 10px;
   padding: 12px;
   border-radius: 12px;
+
   font-size: 13px;
   line-height: 1.45;
+
   background: var(--surface);
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: rgba(17, 24, 39, 0.78);
+
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
 }
 
@@ -151,10 +131,7 @@
   border-color: rgba(0, 0, 0, 0.08);
 }
 
-/* =========================
-   Responsive
-   ========================= */
-
+/* 반응형 */
 @media (max-width: 900px) {
   .nearby-search-wrap {
     max-width: 100%;

@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./CtaSection.css";
 
+// CTA 섹션
 export default function CtaSection() {
   const { isAuthenticated, user } = useAuth();
 
+  // 로그인 여부에 따른 문구/이동 경로
   const copy = isAuthenticated
     ? {
         title: `${user?.name ?? "회원"}님, 예약을 관리해보세요`,

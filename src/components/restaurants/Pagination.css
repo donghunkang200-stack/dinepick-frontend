@@ -1,23 +1,73 @@
 .pagination {
-  margin: 26px 0 0;
+  margin-top: 18px;
   display: flex;
+  gap: 6px;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.page-button {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid #eee;
-  background: #f3f3f3;
+/* 화살표 버튼 */
+.pagination-btn {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  background: #fff;
+  color: rgba(17, 24, 39, 0.75);
+
+  font-weight: 900;
+  font-size: 13px;
+
+  padding: 8px 10px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 800;
+
+  transition: all 0.15s ease;
 }
 
-.page-button.active {
+.pagination-btn:hover {
+  background: rgba(17, 24, 39, 0.06);
+  transform: translateY(-1px);
+}
+
+/* 숫자 버튼 (기본은 텍스트 느낌) */
+.pagination-page {
+  border: 0;
+  background: transparent;
+  color: rgba(17, 24, 39, 0.55);
+
+  font-weight: 900;
+  font-size: 13px;
+
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.pagination-page:hover {
+  background: rgba(17, 24, 39, 0.06);
+  color: rgba(17, 24, 39, 0.9);
+}
+
+/* ✅ 현재 페이지 (블랙 강조) */
+.pagination-page.active,
+.pagination-page:disabled {
   background: #111;
   color: #fff;
-  border-color: #111;
+  cursor: default;
+  transform: none;
+}
+
+/* 비활성 화살표 */
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ... */
+.pagination-ellipsis {
+  color: rgba(17, 24, 39, 0.35);
+  font-weight: 900;
+  padding: 0 4px;
 }

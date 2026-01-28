@@ -2,9 +2,15 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
-import "./AuthPage.css"; // 공용 CSS (로그인/회원가입 같이 사용 추천)
+import "./AuthPage.css"; // 로그인/회원가입 공용 스타일
 
+/*
+  로그인 페이지
+  - 이메일/비밀번호로 로그인
+  - 로그인 후 이전 페이지로 복귀
+*/
 const LoginPage = () => {
+  // 입력 상태
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -12,35 +18,41 @@ const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from;
 
-  // 로그인 후 원래 있던 페이지로 복귀 (없으면 홈)
+  // 로그인 이전 위치 (없으면 홈)
+  const from = location.state?.from;
   const redirectTo = from?.pathname
     ? `${from.pathname}${from.search || ""}${from.hash || ""}`
     : "/";
 
+  // 로그인 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
-      await login({ email, password });
-      toast.success("성공적으로 로그인했습니다!");
-      // 로그인 후 원래 있던 페이지로 복귀
-      navigate(redirectTo, { replace: true });
+      const me = await login({ email, password });
+
+      toast.success("로그인 성공.");
+
+      // 관리자면 관리자 페이지 우선 이동
+      if (me?.role === "ROLE_ADMIN") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate(redirectTo, { replace: true });
+      }
     } catch (err) {
-      console.error("LOGIN ERROR:", err?.response?.data || err);
-      toast.error(err?.message || "로그인 실패 (이메일/비밀번호 확인)");
+      toast.error("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
       setSubmitting(false);
     }
   };
-
   return (
     <div className="auth-wrap">
       <div className="auth-card">
         <h2 className="auth-title">로그인</h2>
 
+        {/* 로그인 폼 */}
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="auth-field">
             <label className="auth-label">이메일</label>
@@ -73,6 +85,7 @@ const LoginPage = () => {
           </button>
         </form>
 
+        {/* 회원가입 이동 */}
         <p className="auth-foot">
           계정이 없으신가요?{" "}
           <Link className="auth-link" to="/signup">

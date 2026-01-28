@@ -16,40 +16,40 @@ import axios from "axios";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  // 유저 정보 / 초기 로딩 상태
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 토큰 존재 기반 인증 상태
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem("accessToken")
   );
 
-  // ✅ 수동 로그아웃 진행 중이면 expired 처리(로그인 이동)를 무시하기 위한 플래그
+  // 수동 로그아웃 중이면 만료처리(expired) 흐름을 막기 위한 플래그
   const manualLogoutRef = useRef(false);
 
+  // accessToken 만료 직전 재발급용 타이머
   const timerRef = useRef(null);
 
+  // 재발급 타이머 정리
   const clearTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+    if (!timerRef.current) return;
+    clearTimeout(timerRef.current);
+    timerRef.current = null;
   };
 
-  // ✅ accessToken 자동 재발급(만료 직전)
+  // accessToken 만료 30초 전에 reissue 예약
   const scheduleAutoReissue = (accessToken) => {
     clearTimer();
+
     const expMs = getJwtExpMs(accessToken);
     if (!expMs) return;
 
-    const now = Date.now();
-    const fireAt = expMs - 30_000;
-    const delay = fireAt - now;
-
+    const delay = expMs - 30_000 - Date.now();
     if (delay <= 0) return;
 
     timerRef.current = setTimeout(async () => {
       try {
-        // 수동 로그아웃 중이면 아무것도 하지 않음
         if (manualLogoutRef.current) return;
 
         const refreshToken = localStorage.getItem("refreshToken");
@@ -67,13 +67,13 @@ export function AuthProvider({ children }) {
 
         localStorage.setItem("accessToken", newAccessToken);
         scheduleAutoReissue(newAccessToken);
-      } catch (e) {
+      } catch {
         await logout("expired");
       }
     }, delay);
   };
 
-  // 로컬 정리(토큰 삭제 + 상태 초기화)
+  // 프론트 로그아웃 정리(토큰/상태/타이머)
   const clearClientAuth = () => {
     clearTimer();
     localStorage.removeItem("accessToken");
@@ -82,23 +82,18 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
   };
 
-  /**
-   * 로그아웃
-   * - manual: 서버 logout 호출 후 (호출한 곳에서 홈으로 이동)
-   * - expired: 세션만료 안내 + 로그인 화면으로 이동
-   */
+  // 로그아웃
+  // - manual: 버튼 로그아웃(페이지 이동은 호출한 곳에서)
+  // - expired: 만료 처리(토스트 + 로그인으로 이동)
   const logout = async (reason = "manual") => {
     if (reason === "manual") manualLogoutRef.current = true;
 
     const refreshToken = localStorage.getItem("refreshToken");
 
     try {
-      if (refreshToken) {
-        await logoutApi(refreshToken);
-      }
-    } catch (e) {
-      // 백엔드가 INVALID_TOKEN / TOKEN_NOT_FOUND를 던져도
-      // 프론트는 항상 로그아웃 상태로 정리해야 함
+      if (refreshToken) await logoutApi(refreshToken);
+    } catch {
+      // 서버 로그아웃 실패해도 프론트는 무조건 정리
     } finally {
       clearClientAuth();
 
@@ -107,13 +102,14 @@ export function AuthProvider({ children }) {
           position: "top-center",
           autoClose: 3000,
         });
-        window.location.hash = "#/login";
+        window.location.hash = "#/login"; // HashRouter 기준
       }
 
       if (reason === "manual") manualLogoutRef.current = false;
     }
   };
 
+  // 토큰 있으면 내 정보 로드 + 재발급 예약
   const loadMe = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -128,8 +124,7 @@ export function AuthProvider({ children }) {
       setUser(me);
       setIsAuthenticated(true);
       scheduleAutoReissue(token);
-    } catch (e) {
-      // 수동 로그아웃이면 무시 (logout 직후 401 등)
+    } catch {
       if (manualLogoutRef.current) {
         setLoading(false);
         return;
@@ -140,21 +135,21 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // 앱 시작 시: 인터셉터 설치 + 로그인 상태 복원
   useEffect(() => {
-    // 401이면 reissue 시도(인터셉터), 실패하면 logout("expired")
     attachAuthInterceptors(() => logout("expired"));
     loadMe();
 
-    return () => {
-      clearTimer();
-    };
+    return () => clearTimer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 회원가입
   const signup = async (payload) => {
     await signupApi(payload);
   };
 
+  // 로그인: 토큰 저장 -> 재발급 예약 -> 내정보 로드
   const login = async (payload) => {
     const { accessToken, refreshToken } = await loginApi(payload);
 
@@ -162,11 +157,11 @@ export function AuthProvider({ children }) {
     localStorage.setItem("refreshToken", refreshToken);
 
     setIsAuthenticated(true);
-
     scheduleAutoReissue(accessToken);
     await loadMe();
   };
 
+  // Provider 값 메모(불필요한 리렌더 방지)
   const value = useMemo(
     () => ({
       user,
@@ -183,6 +178,7 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// AuthContext 사용 훅(Provider 밖이면 에러)
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
