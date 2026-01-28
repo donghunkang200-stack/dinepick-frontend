@@ -14,6 +14,7 @@ import AdminLayout from "./admin/AdminLayout";
 import AdminHomePage from "./admin/pages/AdminHomPage";
 import AdminRestaurantImportPage from "./admin/pages/AdminRestaurantImportPage";
 import AdminMembersPage from "./admin/pages/AdminMembersPage";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const App = () => {
   return (

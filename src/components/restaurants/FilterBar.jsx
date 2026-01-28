@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./FilterBar.css";
+import { REGION_OPTIONS } from "../../utils/regionFilter";
 
 // 카테고리 필터 옵션(라벨/백엔드 값 매핑)
 const CATEGORY_OPTIONS = [
@@ -16,11 +17,17 @@ const CATEGORY_OPTIONS = [
 const valueToLabel = (val) =>
   CATEGORY_OPTIONS.find((o) => o.value === val)?.label ?? "전체";
 
+// 지역 value -> 화면 표시용 label 변환
+const regionToLabel = (val) =>
+  REGION_OPTIONS.find((o) => o.value === val)?.label ?? "전체";
+
 // 검색/카테고리/정렬을 한 곳에서 제어하는 필터 바
 const FilterBar = ({
   keyword = "",
+  region = "ALL",
   selectedCategory = "ALL",
   sortOption,
+  onRegionChange = () => {},
   onCategoryChange = () => {},
   onSortChange = () => {},
   onKeywordSubmit = () => {},
@@ -44,23 +51,45 @@ const FilterBar = ({
       <div className="filter-header">
         {/* 검색 폼(키워드 입력 후 submit) */}
         <form className="filter-search" onSubmit={handleSubmit}>
+          {/* 지역 선택(검색창 앞) */}
+          <select
+            className="filter-select filter-region"
+            value={region}
+            onChange={(e) => onRegionChange({ region: e.target.value })}
+            aria-label="지역 선택"
+          >
+            {REGION_OPTIONS.map((opt) => (
+              <option key={`${opt.label}-${opt.value}`} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="식당명, 지역, 키워드 검색"
+            placeholder="식당명, 키워드 검색"
             aria-label="검색어 입력"
           />
           <button type="submit">{input.trim() ? "검색" : "전체보기"}</button>
         </form>
+
         {/* 우측: 현재 선택 상태 요약 + 정렬 옵션 */}
         <div className="filter-top">
           <div>
-            {/* 현재 검색어 표시 */}
+            {/* 현재 지역 표시 */}
             <div className="filter-meta">
+              <span>지역:</span>
+              <span className="filter-value">{regionToLabel(region)}</span>
+            </div>
+
+            {/* 현재 검색어 표시 */}
+            <div className="filter-meta" style={{ marginTop: 4 }}>
               <span>검색어:</span>
               <span className="filter-value">{keyword || "All"}</span>
             </div>
+
             {/* 현재 카테고리 표시 */}
             <div className="filter-meta" style={{ marginTop: 4 }}>
               <span>카테고리:</span>
@@ -69,6 +98,7 @@ const FilterBar = ({
               </span>
             </div>
           </div>
+
           {/* 정렬 선택(변경 시 부모로 sort 전달) */}
           <select
             className="filter-select"
@@ -81,6 +111,7 @@ const FilterBar = ({
           </select>
         </div>
       </div>
+
       {/* 카테고리 칩(클릭 시 category 변경 이벤트 전달) */}
       <div className="filter-chips">
         {CATEGORY_OPTIONS.map((opt) => (

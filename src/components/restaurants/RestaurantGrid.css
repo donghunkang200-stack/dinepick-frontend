@@ -27,6 +27,58 @@
   color: #666;
 }
 
+/* Cross-fade 컨테이너: 레이어 겹치기 */
+.grid-crossfade {
+  position: relative;
+}
+
+/* 레이어 */
+.grid-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+
+/* 보이는 레이어 */
+.grid-layer.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ✅ skeleton 레이어는 hover 효과 없애서 덜 “가짜”처럼 */
+.grid-layer.skeleton .restaurant-card:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ✅ skeleton 버튼 hover 반응 제거(실수 클릭 대비) */
+.grid-layer.skeleton .restaurant-action {
+  cursor: default;
+}
+.grid-layer.skeleton .restaurant-action:hover {
+  transform: none;
+  background: #fff;
+}
+.grid-layer.skeleton .restaurant-action.primary:hover {
+  background: var(--primary);
+}
+
+/* ✅ 레이아웃 점프 방지: 최소 높이(카드 2줄 정도) */
+.grid-crossfade {
+  min-height: 760px; /* 필요하면 조절 */
+}
+@keyframes gridFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* 반응형 */
 @media (max-width: 900px) {
   .restaurant-grid {

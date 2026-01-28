@@ -5,7 +5,9 @@
   overflow: hidden;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
 }
 
 /* hover 시 카드 살짝 상승 */
@@ -59,10 +61,11 @@
   margin: 0;
 }
 
-/* 메타 정보 묶음 (지역, 가격대 등) */
+/* 메타 정보 묶음  */
 .restaurant-meta {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
 }
 
@@ -93,7 +96,9 @@
   cursor: pointer;
   font-weight: 900;
   font-size: 12px;
-  transition: transform 0.12s ease, background 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
 }
 
 /* hover 시 버튼 반응 */
@@ -101,14 +106,12 @@
   transform: translateY(-1px);
   background: var(--bg);
 }
-
-/* 주요 액션 버튼 */
-.restaurant-action.primary {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
+.details-btn {
+  flex: 0 0 auto;
+  height: 26px;
+  padding: 0 12px;
+  font-size: 11px;
 }
-
 /* 카드 내 카테고리 표시 칩 */
 .restaurant-chip {
   display: inline-flex;

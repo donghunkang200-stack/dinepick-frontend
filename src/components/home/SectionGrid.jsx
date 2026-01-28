@@ -2,8 +2,30 @@ import { useEffect, useState } from "react";
 import "./SectionGrid.css";
 import { fetchRestaurants } from "../../api/restaurants";
 import { useNavigate } from "react-router-dom";
+import Skeleton from "react-loading-skeleton";
 
 const FALLBACK_IMG = "/sushi.jpg";
+
+// 스켈레톤 카드
+const SectionCardSkeleton = () => {
+  return (
+    <article className="card" aria-label="Loading restaurant">
+      <Skeleton height={180} style={{ width: "100%", display: "block" }} />
+      <div className="card-body">
+        <h3 className="card-title" style={{ margin: 0 }}>
+          <Skeleton height={16} width="70%" />
+        </h3>
+        <p className="card-description" style={{ margin: "10px 0 0" }}>
+          <Skeleton height={12} />
+          <Skeleton height={12} width="85%" style={{ marginTop: 6 }} />
+        </p>
+        <p className="card-meta" style={{ margin: "10px 0 0" }}>
+          <Skeleton height={12} width="75%" />
+        </p>
+      </div>
+    </article>
+  );
+};
 
 const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
   const navigate = useNavigate();
@@ -54,49 +76,53 @@ const SectionGrid = ({ title, category = "ALL", size = 6 }) => {
           <h2 className="section-title">{title}</h2>
         </div>
 
-        {loading && <p className="section-grid-state">불러오는 중...</p>}
+        {/* 상태 문구는 “에러/빈 상태”만 남기고 로딩 문구는 제거 추천 */}
         {!loading && error && <p className="section-grid-state">{error}</p>}
         {!loading && !error && items.length === 0 && (
           <p className="section-grid-state">표시할 레스토랑이 없습니다.</p>
         )}
 
         <div className="grid">
-          {items.map((r) => {
-            // 썸네일 fallback 처리
-            const imgSrc = r.thumbnailUrl || FALLBACK_IMG;
+          {/* 로딩이면 스켈레톤 카드 size개 */}
+          {loading
+            ? Array.from({ length: size }).map((_, i) => (
+                <SectionCardSkeleton key={`sk-${i}`} />
+              ))
+            : items.map((r) => {
+                // 썸네일 fallback 처리
+                const imgSrc = r.thumbnailUrl || FALLBACK_IMG;
+                const goDetail = () => navigate(`/restaurants/${r.id}`);
 
-            const goDetail = () => navigate(`/restaurants/${r.id}`);
+                return (
+                  <article
+                    key={r.id}
+                    className="card"
+                    role="button"
+                    tabIndex={0}
+                    onClick={goDetail}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") goDetail();
+                    }}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={r.name}
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = FALLBACK_IMG;
+                      }}
+                    />
 
-            return (
-              <article
-                key={r.id}
-                className="card"
-                role="button"
-                tabIndex={0}
-                onClick={goDetail}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") goDetail();
-                }}
-              >
-                <img
-                  src={imgSrc}
-                  alt={r.name}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.src = FALLBACK_IMG;
-                  }}
-                />
-
-                <div className="card-body">
-                  <h3 className="card-title">{r.name}</h3>
-                  <p className="card-description">{r.description}</p>
-                  <p className="card-meta">
-                    {r.address} · 최대 {r.maxPeoplePerReservation}명
-                  </p>
-                </div>
-              </article>
-            );
-          })}
+                    <div className="card-body">
+                      <h3 className="card-title">{r.name}</h3>
+                      <p className="card-description">{r.description}</p>
+                      <p className="card-meta">
+                        {r.address} · 최대 {r.maxPeoplePerReservation}명
+                      </p>
+                    </div>
+                  </article>
+                );
+              })}
         </div>
       </div>
     </section>
