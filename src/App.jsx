@@ -9,6 +9,11 @@ import { AuthProvider } from "./contexts/AuthContext";
 import AuthRedirect from "./routes/AuthRedirect";
 import MyPage from "./pages/MyPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminRoute from "./routes/AdminRoute";
+import AdminLayout from "./admin/AdminLayout";
+import AdminHomePage from "./admin/pages/AdminHomPage";
+import AdminRestaurantImportPage from "./admin/pages/AdminRestaurantImportPage";
+import AdminMembersPage from "./admin/pages/AdminMembersPage";
 
 const App = () => {
   return (
@@ -46,6 +51,21 @@ const App = () => {
             </AuthRedirect>
           }
         />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<AdminHomePage />} />
+          <Route
+            path="restaurants/import"
+            element={<AdminRestaurantImportPage />}
+          />
+          <Route path="members" element={<AdminMembersPage />} />
+        </Route>
         {/* 존재하지 않는 경로로 접근 시 홈으로 이동 */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

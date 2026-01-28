@@ -1,24 +1,17 @@
 import "./ReservationsSection.css";
 
-/*
-  예약 섹션
-  - 다가오는 예약/지난 예약을 월별로 묶어서 표시
-*/
-
-// YYYY-MM 키 만들기
+// 예약 섹션(다가오는/지난 예약을 월별로 묶어서 표시)
 function monthKey(dateStr) {
   if (!dateStr) return "unknown";
-  return String(dateStr).slice(0, 7); // "2026-01-20" -> "2026-01"
+  return String(dateStr).slice(0, 7);
 }
 
-// "2026-01" -> "2026년 1월"
 function monthLabel(key) {
   if (!key || key === "unknown") return "기타";
   const [y, m] = key.split("-");
   return `${y}년 ${Number(m)}월`;
 }
 
-// 월별 그룹핑
 function groupByMonth(list) {
   const map = new Map();
   for (const r of list) {
@@ -30,6 +23,7 @@ function groupByMonth(list) {
 }
 
 export default function ReservationsSection(props) {
+  // 입력 데이터 정규화
   const upcomingReservations = Array.isArray(props?.upcomingReservations)
     ? props.upcomingReservations
     : [];
@@ -37,6 +31,7 @@ export default function ReservationsSection(props) {
     ? props.pastReservations
     : [];
 
+  // 액션 핸들러/로딩 상태
   const onCancel =
     typeof props?.onCancel === "function" ? props.onCancel : null;
   const cancelLoadingId = props?.cancelLoadingId ?? null;
@@ -49,6 +44,7 @@ export default function ReservationsSection(props) {
 
   const fallbackImage = "/sushi.jpg";
 
+  // 예약 카드
   const ReservationCard = ({ r, showActions }) => (
     <article
       className={`reservation-card ${
@@ -121,7 +117,7 @@ export default function ReservationsSection(props) {
     </article>
   );
 
-  //  월별 그룹 렌더 + 정렬 방향 옵션
+  // 월별 그룹 렌더(정렬 옵션: asc/desc)
   const renderMonthlyGroups = (list, showActions, order = "asc") => {
     const grouped = groupByMonth(list);
 

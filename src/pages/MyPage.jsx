@@ -4,8 +4,7 @@ import ProfileBanner from "../components/mypage/ProfileBanner";
 
 import MyPageTabs from "../components/mypage/MyPageTabs";
 import ReservationsSection from "../components/mypage/ReservationsSection";
-import FavoritesSection from "../components/mypage/FavoritesSection";
-import ReviewsSection from "../components/mypage/ReviewsSection";
+import ProfileSection from "../components/mypage/ProfileSection";
 import { useAuth } from "../contexts/AuthContext";
 import {
   cancelReservation,
@@ -16,10 +15,14 @@ import { toast } from "react-toastify";
 import "./MyPage.css";
 import EditModal from "../components/common/EditModal";
 
+// ✅ 추가
+import { updateMe, withdrawMe } from "../api/members";
+
+// 서버 예약 데이터를 화면 카드용 데이터로 변환
 function toCard(item) {
   return {
     id: item.reservationId,
-    restaurantId: item.restaurantId, // ⭐ 이게 있어야 함
+    restaurantId: item.restaurantId,
     title: item.restaurantName,
     date: item.reservationDate,
     time: String(item.reservationTime).slice(0, 5),
@@ -30,7 +33,6 @@ function toCard(item) {
   };
 }
 
-// 날짜 + 시간 기준 오름차순 정렬
 function sortByDateTimeAsc(list = []) {
   return [...list].sort((a, b) => {
     const aDt = new Date(`${a.date}T${a.time}`);
@@ -39,7 +41,6 @@ function sortByDateTimeAsc(list = []) {
   });
 }
 
-// 날짜 + 시간 기준 내림차순 정렬
 function sortByDateTimeDesc(list = []) {
   return [...list].sort((a, b) => {
     const aDt = new Date(`${a.date}T${a.time}`);
@@ -57,12 +58,21 @@ function isPast(dateStr, timeStr) {
 }
 
 const MyPage = () => {
-  const { user } = useAuth();
+  const { user, reloadMe, logout } = useAuth();
 
-  // 탭 상태
   const [activeTab, setActiveTab] = useState("reservations");
 
-  // 예약 페이지 상태
+  // ✅ 내 정보 수정 상태
+  const [name, setName] = useState(user?.name ?? "");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
+
+  // user 바뀌면 name 동기화
+  useEffect(() => {
+    setName(user?.name ?? "");
+  }, [user]);
+
+  // 예약 목록 페이지네이션 상태
   const [page, setPage] = useState(0);
   const size = 10;
 
@@ -70,10 +80,8 @@ const MyPage = () => {
   const [resPage, setResPage] = useState(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
 
-  // ProfileBanner fallback user (객체 재생성 방지)
   const fallbackUser = useMemo(() => ({ name: "게스트", email: "" }), []);
 
-  // API 로딩 함수 useCallback으로 고정 (eslint-disable 제거)
   const loadMyReservations = useCallback(async () => {
     setLoadingReservations(true);
     try {
@@ -88,13 +96,11 @@ const MyPage = () => {
     }
   }, [page, size]);
 
-  // 탭이 예약 탭일 때만 호출
   useEffect(() => {
     if (activeTab !== "reservations") return;
     loadMyReservations();
   }, [activeTab, loadMyReservations]);
 
-  // 예약 취소 핸들러
   const handleCancelReservation = useCallback(
     async (r) => {
       if (!r?.id) return;
@@ -118,7 +124,7 @@ const MyPage = () => {
         setCancelLoadingId(null);
       }
     },
-    [loadMyReservations]
+    [loadMyReservations],
   );
 
   const { upcomingReservations, pastReservations } = useMemo(() => {
@@ -139,12 +145,6 @@ const MyPage = () => {
     };
   }, [resPage]);
 
-  // 아직 연동 전이면 favorites/reviews는 undefined로 두는게 낫다
-  // - FavoritesSection이 favorites를 받으면 API 호출을 안 하도록 만들어졌기 때문
-  const favorites = undefined;
-  const reviews = [];
-
-  // 예약 수정 상태
   const [editOpen, setEditOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [editLoadingId, setEditLoadingId] = useState(null);
@@ -167,8 +167,8 @@ const MyPage = () => {
       setEditLoadingId(editing.id);
       try {
         await updateReservation(editing.id, payload);
-
         toast.success("예약이 수정되었습니다.");
+
         setEditOpen(false);
         setEditing(null);
 
@@ -186,10 +186,51 @@ const MyPage = () => {
         setEditLoadingId(null);
       }
     },
-    [editing, loadMyReservations]
+    [editing, loadMyReservations],
   );
 
   const totalPages = Math.max(resPage?.totalPages ?? 1, 1);
+
+  // 내 정보 저장
+  const handleSaveProfile = useCallback(async () => {
+    const nextName = name.trim();
+    if (!nextName) return toast.error("이름을 입력해주세요.");
+
+    setSavingProfile(true);
+    try {
+      await updateMe({ name: nextName });
+      toast.success("회원정보가 수정되었습니다.");
+      await reloadMe?.();
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 401) toast.error("로그인이 필요합니다.");
+      else toast.error("회원정보 수정 실패");
+    } finally {
+      setSavingProfile(false);
+    }
+  }, [name, reloadMe]);
+
+  // 탈퇴
+  const handleWithdraw = useCallback(async () => {
+    const ok = window.confirm(
+      "정말 탈퇴할까요? (탈퇴 후 복구는 관리자만 가능)",
+    );
+    if (!ok) return;
+
+    setWithdrawing(true);
+    try {
+      await withdrawMe(); // 204
+      toast.success("탈퇴 처리되었습니다.");
+      await logout?.("manual");
+      window.location.hash = "#/"; // HashRouter 기준
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 401) toast.error("로그인이 필요합니다.");
+      else toast.error("탈퇴 실패");
+    } finally {
+      setWithdrawing(false);
+    }
+  }, [logout]);
 
   return (
     <Layout>
@@ -198,6 +239,20 @@ const MyPage = () => {
 
         <MyPageTabs activeTab={activeTab} onChangeTab={setActiveTab} />
 
+        {/* 내 정보 탭 */}
+        {activeTab === "profile" && (
+          <ProfileSection
+            user={user ?? fallbackUser}
+            name={name}
+            onChangeName={setName}
+            saving={savingProfile}
+            withdrawing={withdrawing}
+            onSave={handleSaveProfile}
+            onWithdraw={handleWithdraw}
+          />
+        )}
+
+        {/* 예약 탭 */}
         {activeTab === "reservations" && (
           <>
             {loadingReservations && (
@@ -249,12 +304,6 @@ const MyPage = () => {
             )}
           </>
         )}
-
-        {activeTab === "favorites" && (
-          <FavoritesSection favorites={favorites} />
-        )}
-
-        {activeTab === "reviews" && <ReviewsSection reviews={reviews} />}
       </div>
     </Layout>
   );

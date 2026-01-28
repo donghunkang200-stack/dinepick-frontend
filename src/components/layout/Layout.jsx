@@ -4,10 +4,11 @@ import "./Layout.css";
 import CtaSection from "./CTASection";
 import { useLocation } from "react-router-dom";
 
+// 공통 레이아웃
 const Layout = ({ children }) => {
   const location = useLocation();
 
-  // CTA 숨길 페이지들 (기능 추가하면서 변경될 수 있음)
+  // CTA 비활성화 페이지 경로
   const hideCta =
     location.pathname.startsWith("/me") ||
     location.pathname.startsWith("/login") ||

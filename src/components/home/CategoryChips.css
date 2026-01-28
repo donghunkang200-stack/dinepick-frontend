@@ -1,7 +1,4 @@
-/* =========================
-   Category Chips (Home)
-   ========================= */
-
+/* 칩 래퍼 */
 .category-chips {
   margin-top: 18px;
 
@@ -9,10 +6,10 @@
   flex-wrap: wrap;
   gap: 10px;
 
-  justify-content: center; /* ✅ 가로 가운데 */
+  justify-content: center;
 }
 
-/* 기본 칩 */
+/* 칩 */
 .chip {
   appearance: none;
   border: 1px solid var(--border);
@@ -32,12 +29,12 @@
     border-color 0.15s ease, transform 0.12s ease;
 }
 
-/* hover */
+/* 호버 */
 .chip:hover {
   background: #f3f4f6;
 }
 
-/*  선택(active) 상태: 어두운 배경 + 흰 글자 */
+/* 선택 */
 .chip.active {
   background: #111827;
   color: #ffffff;
@@ -45,20 +42,18 @@
   font-weight: 700;
 }
 
-/* active + hover */
+/* 선택 호버 */
 .chip.active:hover {
   background: #0f172a;
 }
 
-/* 포커스 접근성 */
+/* 포커스 */
 .chip:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
 }
 
-/* =========================
-   Mobile tweak
-   ========================= */
+/* 반응형 */
 @media (max-width: 480px) {
   .chip {
     padding: 7px 12px;

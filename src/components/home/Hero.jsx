@@ -5,18 +5,16 @@ import "./Hero.css";
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1400&q=80";
 
-/*
-  Hero
-  - Main introduction section
-  - Navigates to restaurants page with keyword query
-*/
+// 히어로 섹션
 const Hero = () => {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
 
+  // 검색어 공백 제거 및 버튼 활성화 여부
   const trimmedKeyword = keyword.trim();
   const isDisabled = trimmedKeyword.length === 0;
 
+  // 검색 제출 시 레스토랑 목록 페이지로 이동
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isDisabled) return;

@@ -1,11 +1,9 @@
-/* =========================
-   HERO
-   ========================= */
+/* 히어로 */
 .hero {
   padding: 32px 0 18px;
 }
 
-/* 2컬럼 레이아웃 (텍스트 / 이미지) */
+/* 레이아웃 */
 .hero .container {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
@@ -13,9 +11,7 @@
   align-items: center;
 }
 
-/* =========================
-   Text Area
-   ========================= */
+/* 텍스트 */
 .hero-content {
   display: grid;
   gap: 12px;
@@ -35,9 +31,7 @@
   line-height: 1.5;
 }
 
-/* =========================
-   Search
-   ========================= */
+/* 검색 */
 .hero-search {
   margin-top: 8px;
 
@@ -54,7 +48,6 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* wrapper에 포커스가 들어오면 강조 */
 .hero-search:focus-within {
   border-color: rgba(59, 130, 246, 0.45);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
@@ -107,9 +100,7 @@
   filter: none;
 }
 
-/* =========================
-   Image (안 깨지게: aspect-ratio)
-   ========================= */
+/* 이미지 */
 .hero-image {
   width: 100%;
   border-radius: var(--radius);
@@ -118,10 +109,7 @@
   background: var(--surface);
   box-shadow: var(--shadow);
 
-  /* ⭐ 핵심: 비율 고정으로 절대 안 부서짐 */
   aspect-ratio: 16 / 10;
-
-  /* 너무 커지는 것 방지 */
   max-height: 340px;
 }
 
@@ -132,9 +120,7 @@
   object-fit: cover;
 }
 
-/* =========================
-   Responsive
-   ========================= */
+/* 반응형 */
 @media (max-width: 900px) {
   .hero .container {
     grid-template-columns: 1fr;

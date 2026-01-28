@@ -1,3 +1,4 @@
+/* 예약 목록 */
 .reservations {
   margin-top: 14px;
   display: grid;
@@ -16,6 +17,7 @@
   letter-spacing: -0.2px;
 }
 
+/* 빈 상태 */
 .empty {
   border: 1px dashed #e5e7eb;
   border-radius: 12px;
@@ -25,11 +27,13 @@
   font-size: 13px;
 }
 
+/* 리스트 */
 .reservation-list {
   display: grid;
   gap: 10px;
 }
 
+/* 카드 */
 .reservation-card {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -82,6 +86,7 @@
   padding-right: 6px;
 }
 
+/* 리뷰 버튼 */
 .review-button {
   height: 32px;
   padding: 0 12px;
@@ -93,7 +98,7 @@
   cursor: pointer;
 }
 
-/* 카드 내부 좌/우 분리 */
+/* 카드 내부 레이아웃 */
 .reservation-content {
   display: flex;
   justify-content: space-between;
@@ -101,14 +106,14 @@
   width: 100%;
 }
 
-/* 오른쪽 액션 영역 */
 .reservation-action {
   display: flex;
   align-items: center;
+  gap: 10px;
   margin-left: 16px;
 }
 
-/*  예약 취소 버튼 (강조) */
+/* 취소 버튼 */
 .reservation-cancel-btn {
   padding: 10px 14px;
   border-radius: 10px;
@@ -136,39 +141,29 @@
   transform: none;
 }
 
-/* 카드 간격 */
+/* 카드 그룹 */
 .reservations-grid {
   display: grid;
   gap: 2px;
 }
 
 /* 지난 예약 */
-/* 배경을 연한 회색으로 */
 .reservation-card.reservation-past {
   background: #f6f7f8;
   border-color: #e5e7eb;
 }
 
-/* 텍스트 빨간색 + 강조 */
 .reservation-card.reservation-past .reservation-status {
   color: #d32f2f;
   font-weight: 700;
 }
 
-/* 제목/메타 톤 살짝 다운 */
 .reservation-card.reservation-past .reservation-title {
   color: #333;
 }
 
 .reservation-card.reservation-past .reservation-meta {
   color: #777;
-}
-
-.reservation-action {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
 }
 
 /* 수정 버튼 */
@@ -205,7 +200,7 @@
   opacity: 0.9;
 }
 
-/* 모바일 반응형 */
+/* 반응형 */
 @media (max-width: 740px) {
   .reservation-card {
     grid-template-columns: 88px 1fr;

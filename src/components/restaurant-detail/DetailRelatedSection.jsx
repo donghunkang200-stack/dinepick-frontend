@@ -1,14 +1,11 @@
 import RestaurantGrid from "../restaurants/RestaurantGrid";
 import "./DetailRelatedSection.css";
 
-/*
-  DetailRelatedSection
-  - Related posts/restaurants grid
-*/
+// 상세 페이지 하단 연관 레스토랑 섹션
 const DetailRelatedSection = ({ items }) => {
   return (
     <section className="detail-related">
-      <h2 className="detail-related-title">관련 게시물</h2>
+      <h2 className="detail-related-title">추천하는 레스토랑</h2>
       <RestaurantGrid items={items} />
     </section>
   );

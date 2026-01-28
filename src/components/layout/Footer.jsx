@@ -1,9 +1,6 @@
 import "./Layout.css";
 
-/*
-  Footer
-  - Global footer area
-*/
+// 푸터
 const Footer = () => {
   return (
     <footer className="footer">
@@ -29,6 +26,7 @@ const Footer = () => {
   );
 };
 
+// 푸터 컬럼
 const FooterColumn = ({ title, items }) => {
   return (
     <div className="footer-column">

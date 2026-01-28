@@ -9,15 +9,12 @@ import ConfirmModal from "../common/ConfirmModal";
 import "./DetailReservationPanel.css";
 import { useNavigate, useLocation } from "react-router-dom";
 
-/*
-  예약 생성 폼
-*/
+// 상세 페이지 예약 패널(가용성 체크 → 확인 모달 → 예약 생성)
 const DetailReservationPanel = ({ restaurant }) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // restaurant props가 없으면 안전하게 렌더 중단
   if (!restaurant) return null;
 
   const {
@@ -29,15 +26,14 @@ const DetailReservationPanel = ({ restaurant }) => {
   const [reservationDate, setReservationDate] = useState("");
   const [reservationTime, setReservationTime] = useState("11:30");
   const [reservationPeople, setReservationPeople] = useState("1");
-
   const [submitting, setSubmitting] = useState(false);
 
-  // confirm modal 상태
+  // 확인 모달 상태(최종 승인 후 실제 예약 생성)
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
-  const [pendingPayload, setPendingPayload] = useState(null); // 확인 누르면 이걸로 예약 생성
+  const [pendingPayload, setPendingPayload] = useState(null);
 
-  // 오늘 이전 날짜 선택 방지(UX)
+  // 날짜 input에서 오늘 이전 선택 방지
   const minDate = useMemo(() => {
     const d = new Date();
     const yyyy = d.getFullYear();
@@ -46,10 +42,9 @@ const DetailReservationPanel = ({ restaurant }) => {
     return `${yyyy}-${mm}-${dd}`;
   }, []);
 
-  // 예약하기 버튼 클릭
+  // 예약 버튼: (1) 로그인 확인 → (2) 입력 검증 → (3) 예약 가능 여부 조회 → (4) 확인 모달 오픈
   const handleReserve = async () => {
     if (!isAuthenticated) {
-      // 로그인 후 다시 돌아오기 위해 현재 위치 저장
       navigate("/login", { state: { from: location } });
       toast.info("예약하려면 로그인이 필요합니다.");
       return;
@@ -71,7 +66,6 @@ const DetailReservationPanel = ({ restaurant }) => {
       return;
     }
 
-    // maxPeoplePerReservation도 한번 더 방어
     if (peopleCount > maxPeoplePerReservation) {
       toast.error(`최대 ${maxPeoplePerReservation}명까지 예약 가능합니다.`);
       return;
@@ -79,25 +73,22 @@ const DetailReservationPanel = ({ restaurant }) => {
 
     setSubmitting(true);
     try {
-      // 1) 예약 가능 여부 먼저 체크 (availability)
       const availability = await checkReservationAvailability({
         restaurantId,
         date: reservationDate,
-        time: reservationTime, // ✅ 초 빼고 그대로
+        time: reservationTime,
         peopleCount,
       });
 
-      // 2) 불가능하면 안내 후 종료
       if (!availability?.available) {
         toast.error(availability?.message || "예약이 불가능합니다.");
         return;
       }
 
-      // 3) 가능하면 모달로 최종 확인
       const payload = {
         restaurantId,
         reservationDate,
-        reservationTime, // ✅ 그대로
+        reservationTime,
         peopleCount,
       };
 
@@ -124,7 +115,7 @@ const DetailReservationPanel = ({ restaurant }) => {
     }
   };
 
-  // 모달에서 "확인" 눌렀을 때 실제 예약 생성
+  // 확인 모달 "예약 진행": 실제 예약 생성 API 호출
   const handleConfirmReserve = async () => {
     if (!pendingPayload) return;
 
@@ -133,10 +124,7 @@ const DetailReservationPanel = ({ restaurant }) => {
       await createReservation(pendingPayload);
       toast.success(`${name || "레스토랑"} 예약 요청이 접수되었습니다!`);
 
-      // UI 초기화
       setReservationDate("");
-      // setReservationTime("11:30");
-      // setReservationPeople("1");
 
       setConfirmOpen(false);
       setPendingPayload(null);
@@ -152,8 +140,9 @@ const DetailReservationPanel = ({ restaurant }) => {
     }
   };
 
+  // 모달 닫기: 처리 중이면 닫기 방지 + 임시 payload/메시지 정리
   const handleCloseModal = () => {
-    if (submitting) return; // 처리중이면 닫기 방지(원하면 제거 가능)
+    if (submitting) return;
     setConfirmOpen(false);
     setPendingPayload(null);
     setConfirmMessage("");
@@ -231,7 +220,6 @@ const DetailReservationPanel = ({ restaurant }) => {
         예약 확정은 레스토랑 확인 후 진행됩니다.
       </p>
 
-      {/* 예약 확인 모달 */}
       <ConfirmModal
         open={confirmOpen}
         title="예약 확인"

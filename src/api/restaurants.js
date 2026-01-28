@@ -55,7 +55,7 @@ export async function fetchNearbyRestaurants({
   const params = {
     lat,
     lng,
-    radius: radiusKm, // 서버 스펙: km
+    radius: radiusKm,
     page,
     size,
   };

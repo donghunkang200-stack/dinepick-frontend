@@ -1,6 +1,6 @@
 import "./CategoryChips.css";
 
-// label: 실질적 렌더링되는 텍스트, value: backend에 전달하는 값
+// 카테고리 옵션(label: 화면 표시, value: API 전달 값)
 const CATEGORY_OPTIONS = [
   { label: "전체", value: "ALL" },
   { label: "한식", value: "KOREAN" },
@@ -13,7 +13,7 @@ const CATEGORY_OPTIONS = [
 
 export default function CategoryChips({
   selectedCategory = "ALL",
-  onCategoryChange = () => {}, // Home에서 props 안 줘도 안 터지게 안전장치
+  onCategoryChange = () => {},
 }) {
   return (
     <div className="category-chips">

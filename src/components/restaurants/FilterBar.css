@@ -1,3 +1,4 @@
+/* 필터 바(전체 래퍼) */
 .filter-bar {
   margin-top: 18px;
   padding: 14px;
@@ -9,6 +10,15 @@
   overflow: visible;
 }
 
+/* 헤더 레이아웃(좌: 검색 / 우: 필터 컨트롤) */
+.filter-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+
+/* 상단: 타이틀/셀렉트 컨테이너(기본 정의) */
 .filter-top {
   display: flex;
   align-items: center;
@@ -16,12 +26,14 @@
   gap: 12px;
 }
 
+/* 타이틀 텍스트 */
 .filter-title {
   font-size: 13px;
   font-weight: 900;
   letter-spacing: -0.2px;
 }
 
+/* 정렬/필터 select */
 .filter-select {
   height: 38px;
   padding: 0 12px;
@@ -32,12 +44,14 @@
   font-size: 12px;
 }
 
+/* 칩 리스트(필터 옵션들) */
 .filter-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
+/* 칩 기본 */
 .filter-chip {
   border: 1px solid var(--border);
   background: var(--bg);
@@ -49,14 +63,13 @@
     background 0.12s ease;
 }
 
+/* 칩 hover */
 .filter-chip:hover {
   transform: translateY(-1px);
   border-color: rgba(17, 17, 17, 0.18);
 }
-.filter-chip.active:hover {
-  filter: brightness(0.95);
-  transform: translateY(-1px);
-}
+
+/* 칩 active */
 .filter-chip.active {
   background: #111827;
   color: #ffffff;
@@ -64,6 +77,13 @@
   font-weight: 800;
 }
 
+/* 칩 active + hover */
+.filter-chip.active:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+/* 결과/상태 메타(예: 총 개수 등) */
 .filter-meta {
   font-size: 12px;
   color: var(--muted);
@@ -72,19 +92,13 @@
   align-items: center;
 }
 
+/* 메타 값 강조 */
 .filter-value {
   font-weight: 900;
   color: var(--text);
 }
 
-.filter-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 14px;
-  align-items: center;
-}
-
-/* 오른쪽: Filters 텍스트 + select 정렬은 옆으로 */
+/* 상단 우측 정렬(이 정의가 위 .filter-top을 덮어씀) */
 .filter-top {
   display: flex;
   align-items: center;
@@ -93,7 +107,7 @@
   min-width: 320px;
 }
 
-/* 왼쪽: 검색창 */
+/* 검색바(좌측) */
 .filter-search {
   margin-top: 12px;
 
@@ -106,18 +120,17 @@
   border: 1px solid var(--border);
   background: var(--surface);
 
-  /* 기본 상태에서도 그림자 */
   box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08);
-
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* wrapper 포커스 */
+/* 검색바 포커스 강조 */
 .filter-search:focus-within {
   border-color: rgba(59, 130, 246, 0.45);
   box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
 }
 
+/* 검색 input */
 .filter-search input {
   flex: 1;
   height: 42px;
@@ -130,10 +143,12 @@
   color: #111827;
 }
 
+/* 검색 placeholder */
 .filter-search input::placeholder {
   color: #9ca3af;
 }
 
+/* 검색 버튼 */
 .filter-search button {
   height: 42px;
   padding: 0 18px;
@@ -149,6 +164,7 @@
   transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
 }
 
+/* 검색 버튼 hover/active */
 .filter-search button:hover {
   transform: translateY(-1px);
   filter: brightness(0.98);
@@ -158,9 +174,7 @@
   transform: translateY(0);
 }
 
-/* =========================
-   반응형
-   ========================= */
+/* 반응형(모바일) */
 @media (max-width: 768px) {
   .filter-header {
     grid-template-columns: 1fr;
